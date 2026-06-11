@@ -1,6 +1,4 @@
-// app/login.tsx
-import { Alert, StyleSheet, View } from "react-native";
-import { Button, Card, Paragraph, Title } from "react-native-paper";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { useAuthStore } from "../store/useAuthStore";
 
 export default function LoginScreen() {
@@ -31,33 +29,36 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.brandingSection}>
-        <Title style={styles.logo}>aslan.</Title>
-        <Paragraph style={styles.subtitle}>Smart Wallet Application</Paragraph>
+        <Text style={styles.logo}>aslan.</Text>
+        <Text style={styles.subtitle}>Smart Wallet Application</Text>
       </View>
 
       <View style={styles.actionSection}>
-        <Card mode="elevated" style={styles.card}>
-          <Card.Content>
-            <Button
-              mode="contained"
-              onPress={handleRealGoogleSignIn}
-              buttonColor="#4285F4"
-              style={styles.primaryAuthButton}
-              contentStyle={{ paddingVertical: 10 }}
-            >
+        <View style={styles.card}>
+          <Pressable
+            onPress={handleRealGoogleSignIn}
+            style={({ pressed }) => [
+              styles.primaryAuthButton,
+              pressed && styles.buttonPressed,
+            ]}
+          >
+            <Text style={styles.primaryAuthButtonText}>
               Sign In with Google
-            </Button>
+            </Text>
+          </Pressable>
 
-            <Button
-              mode="outlined"
-              onPress={handleMockSignIn}
-              style={styles.mockButton}
-              textColor="#374151"
-            >
+          <Pressable
+            onPress={handleMockSignIn}
+            style={({ pressed }) => [
+              styles.mockButton,
+              pressed && styles.buttonPressed,
+            ]}
+          >
+            <Text style={styles.mockButtonText}>
               Bypass with Sandbox Profile (Simulator / Web)
-            </Button>
-          </Card.Content>
-        </Card>
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
@@ -90,14 +91,42 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   card: {
+    gap: 12,
     borderRadius: 12,
     padding: 8,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   primaryAuthButton: {
+    backgroundColor: "#4285F4",
     borderRadius: 12,
-    marginBottom: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: "center",
   },
   mockButton: {
+    backgroundColor: "#F3F4F6",
     borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: "center",
+  },
+  primaryAuthButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  mockButtonText: {
+    color: "#374151",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  buttonPressed: {
+    opacity: 0.85,
   },
 });

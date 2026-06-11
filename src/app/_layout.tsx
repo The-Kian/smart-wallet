@@ -1,7 +1,6 @@
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { Provider as PaperProvider } from "react-native-paper";
 import { useAuthStore } from "../store/useAuthStore";
 
 export default function RootLayout() {
@@ -29,9 +28,5 @@ export default function RootLayout() {
     );
   }
 
-  return (
-    <PaperProvider>
-      <Slot />
-    </PaperProvider>
-  );
+  return <Slot />;
 }

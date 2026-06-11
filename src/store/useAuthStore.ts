@@ -1,4 +1,3 @@
-// store/useAuthStore.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,19 +19,27 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set: (state: Partial<AuthState>) => void) => ({
+    (set) => ({
       user: null,
       isAuthenticated: false,
       isHydrated: false,
-      signIn: (user: UserProfile) => set({ user, isAuthenticated: true }),
+      signIn: (user) => set({ user, isAuthenticated: true }),
       signOut: () => set({ user: null, isAuthenticated: false }),
-      setHydrated: (hydrated: boolean) => set({ isHydrated: hydrated }),
+      setHydrated: (hydrated) => set({ isHydrated: hydrated }),
     }),
     {
       name: 'smart-wallet-auth',
       storage: createJSONStorage(() => AsyncStorage),
-      onRehydrateStorage: () => (state: AuthState | undefined) => {
-        state?.setHydrated(true);
+      // Prevent 'isHydrated' from being written to AsyncStorage
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+      // Safely trigger hydration completion even if storage is completely empty
+      onRehydrateStorage: (initialState) => {
+        return () => {
+          initialState.setHydrated(true);
+        };
       },
     }
   )

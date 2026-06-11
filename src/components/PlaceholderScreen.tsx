@@ -1,6 +1,4 @@
-import { StyleSheet, View } from "react-native";
-import { Card, Text } from "react-native-paper";
-import { Header } from "./Header";
+import { StyleSheet, Text, View } from "react-native";
 
 type PlaceholderScreenProps = {
   title: string;
@@ -13,18 +11,11 @@ export function PlaceholderScreen({
 }: PlaceholderScreenProps) {
   return (
     <View style={styles.screen}>
-      <Header />
       <View style={styles.body}>
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text variant="titleLarge" style={styles.title}>
-              {title}
-            </Text>
-            <Text variant="bodyMedium" style={styles.description}>
-              {description}
-            </Text>
-          </Card.Content>
-        </Card>
+        <View style={styles.card}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
+        </View>
       </View>
     </View>
   );
@@ -47,6 +38,12 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
     paddingHorizontal: 16,
     borderRadius: 12,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 1,
   },
   title: {
     color: "#0F172A",
