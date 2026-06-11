@@ -1,4 +1,4 @@
-import { Slot, useRouter, useSegments } from "expo-router";
+import { Href, Slot, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useAuthStore } from "../store/useAuthStore";
@@ -14,16 +14,16 @@ export default function RootLayout() {
     const inAuthGroup = segments[0] === "login";
 
     if (!isAuthenticated && !inAuthGroup) {
-      router.replace("/login");
+      router.replace("/login" as Href);
     } else if (isAuthenticated && inAuthGroup) {
-      router.replace("/(tabs)");
+      router.replace("/(tabs)" as Href);
     }
   }, [isAuthenticated, isHydrated, segments]);
 
   if (!isHydrated) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="loading-indicator" />
       </View>
     );
   }

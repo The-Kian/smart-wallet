@@ -4,6 +4,7 @@
   "compilerOptions": {
     "strict": true,
     "lib": ["ES2024"],
+    "types": ["jest", "node"],
     "paths": {
       "@/*": [
         "./src/*"

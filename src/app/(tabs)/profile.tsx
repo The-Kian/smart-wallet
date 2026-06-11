@@ -58,6 +58,7 @@ export default function Profile() {
 
         <Pressable
           onPress={handleSignOut}
+          accessibilityRole="button"
           style={({ pressed }) => [
             styles.signOutButton,
             pressed && styles.buttonPressed,

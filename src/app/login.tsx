@@ -91,6 +91,7 @@ export default function LoginScreen() {
         <View style={styles.card}>
           <Pressable
             onPress={handleRealGoogleSignIn}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.primaryAuthButton,
               pressed && styles.buttonPressed,
@@ -103,6 +104,7 @@ export default function LoginScreen() {
 
           <Pressable
             onPress={handleMockSignIn}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.mockButton,
               pressed && styles.buttonPressed,
