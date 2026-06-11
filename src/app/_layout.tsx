@@ -1,29 +1,37 @@
-import { Tabs } from "expo-router";
+import { Slot, useRouter, useSegments } from "expo-router";
+import { useEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
+import { Provider as PaperProvider } from "react-native-paper";
+import { useAuthStore } from "../store/useAuthStore";
 
 export default function RootLayout() {
+  const { isAuthenticated, isHydrated } = useAuthStore();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const inAuthGroup = segments[0] === "login";
+
+    if (!isAuthenticated && !inAuthGroup) {
+      router.replace("/login");
+    } else if (isAuthenticated && inAuthGroup) {
+      router.replace("/(tabs)");
+    }
+  }, [isAuthenticated, isHydrated, segments]);
+
+  if (!isHydrated) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: "#0F766E",
-        tabBarInactiveTintColor: "#94A3B8",
-        tabBarStyle: {
-          borderTopWidth: 0,
-          backgroundColor: "#FFFFFF",
-          height: 78,
-          paddingTop: 10,
-          paddingBottom: 12,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "600",
-        },
-      }}
-    >
-      <Tabs.Screen name="index" options={{ title: "Wallet" }} />
-      <Tabs.Screen name="pots" options={{ title: "Pots" }} />
-      <Tabs.Screen name="shop" options={{ title: "Shop" }} />
-      <Tabs.Screen name="profile" options={{ title: "Profile" }} />
-    </Tabs>
+    <PaperProvider>
+      <Slot />
+    </PaperProvider>
   );
 }

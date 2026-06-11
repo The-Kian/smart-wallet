@@ -1,5 +1,4 @@
-import { PlaceholderScreen } from "../components/PlaceholderScreen";
-
+import { PlaceholderScreen } from "../../components/PlaceholderScreen";
 export default function Shop() {
   return (
     <PlaceholderScreen
