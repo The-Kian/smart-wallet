@@ -16,7 +16,7 @@ const GOOGLE_CLIENT_ID =
 export default function LoginScreen() {
   const { signIn } = useAuthStore();
 
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
+  const [, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: GOOGLE_CLIENT_ID,
       scopes: ["profile", "email"],
@@ -28,41 +28,41 @@ export default function LoginScreen() {
   );
 
   useEffect(() => {
+    const handleTokenResponse = async (access_token: string) => {
+      try {
+        const userProfile = await fetchGoogleUserProfile(access_token);
+
+        if (userProfile) {
+          signIn(userProfile);
+        } else {
+          Alert.alert(
+            "Authentication Failed",
+            "Could not fetch user profile from Google.",
+          );
+        }
+      } catch {
+        Alert.alert(
+          "Authentication Failed",
+          "Could not complete Google Auth login.",
+        );
+      }
+    };
+
     if (response?.type === "success") {
       const { access_token } = response.params;
-      handleTokenResponse(access_token);
+      void handleTokenResponse(access_token);
     } else if (response?.type === "error") {
       Alert.alert(
         "Authentication Failed",
         response.params.error || "Could not complete Google Auth login.",
       );
     }
-  }, [response]);
-
-  const handleTokenResponse = async (access_token: string) => {
-    try {
-      const userProfile = await fetchGoogleUserProfile(access_token);
-
-      if (userProfile) {
-        signIn(userProfile);
-      } else {
-        Alert.alert(
-          "Authentication Failed",
-          "Could not fetch user profile from Google.",
-        );
-      }
-    } catch (error) {
-      Alert.alert(
-        "Authentication Failed",
-        "Could not complete Google Auth login.",
-      );
-    }
-  };
+  }, [response, signIn]);
 
   const handleRealGoogleSignIn = async () => {
     try {
       await promptAsync();
-    } catch (error) {
+    } catch {
       Alert.alert(
         "Authentication Failed",
         "Could not initiate Google Auth login.",

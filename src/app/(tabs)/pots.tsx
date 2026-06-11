@@ -1,4 +1,4 @@
-import { PlaceholderScreen } from "../../components/PlaceholderScreen";
+import { PlaceholderScreen } from "../../screens/PlaceholderScreen";
 
 export default function Pots() {
   return (
