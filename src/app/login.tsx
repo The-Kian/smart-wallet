@@ -1,17 +1,71 @@
+import * as AuthSession from "expo-auth-session";
+import { useEffect } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { fetchGoogleUserProfile } from "../services/googleAuth";
 import { useAuthStore } from "../store/useAuthStore";
+
+const discovery = {
+  authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+  tokenEndpoint: "https://www.googleapis.com/oauth2/v4/token",
+  revocationEndpoint: "https://oauth2.googleapis.com/revoke",
+};
+
+const GOOGLE_CLIENT_ID =
+  "118189943193-96r1cuehgkagl5l570kvn13tej7ahkt2.apps.googleusercontent.com";
 
 export default function LoginScreen() {
   const { signIn } = useAuthStore();
 
-  const handleRealGoogleSignIn = async () => {
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(
+    {
+      clientId: GOOGLE_CLIENT_ID,
+      scopes: ["profile", "email"],
+      redirectUri: AuthSession.makeRedirectUri(),
+      responseType: AuthSession.ResponseType.Token,
+      usePKCE: false,
+    },
+    discovery,
+  );
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { access_token } = response.params;
+      handleTokenResponse(access_token);
+    } else if (response?.type === "error") {
+      Alert.alert(
+        "Authentication Failed",
+        response.params.error || "Could not complete Google Auth login.",
+      );
+    }
+  }, [response]);
+
+  const handleTokenResponse = async (access_token: string) => {
     try {
-      // TODO: Place your operational logic for Firebase / Google Auth here
-      // const response = await triggerGoogleAuth();
+      const userProfile = await fetchGoogleUserProfile(access_token);
+
+      if (userProfile) {
+        signIn(userProfile);
+      } else {
+        Alert.alert(
+          "Authentication Failed",
+          "Could not fetch user profile from Google.",
+        );
+      }
     } catch (error) {
       Alert.alert(
         "Authentication Failed",
         "Could not complete Google Auth login.",
+      );
+    }
+  };
+
+  const handleRealGoogleSignIn = async () => {
+    try {
+      await promptAsync();
+    } catch (error) {
+      Alert.alert(
+        "Authentication Failed",
+        "Could not initiate Google Auth login.",
       );
     }
   };
