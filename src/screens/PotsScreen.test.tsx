@@ -4,6 +4,7 @@ import { usePotsStore } from "../features/pots/store/usePotsStore";
 import { useWalletStore } from "../features/wallet/store/useWalletStore";
 import PotsScreen from "./PotsScreen";
 
+
 describe("PotsScreen", () => {
   beforeEach(() => {
     usePotsStore.setState({

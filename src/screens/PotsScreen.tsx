@@ -1,5 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 
+import AddPotModal from "@/features/pots/components/AddPotModal";
+import { useState } from "react";
 import { usePotsStore } from "../features/pots/store/usePotsStore";
 import { useWalletStore } from "../features/wallet/store/useWalletStore";
 
@@ -12,7 +14,7 @@ const formatCurrency = (pence: number) =>
 export default function PotsScreen() {
   const walletBalance = useWalletStore((state) => state.balance);
   const pots = usePotsStore((state) => state.pots);
-
+  const [isAddPotModalVisible, setIsAddPotModalVisible] = useState(false);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -32,7 +34,13 @@ export default function PotsScreen() {
 
       <View style={styles.potsSection}>
         <Text style={styles.sectionTitle}>Your pots</Text>
-
+        <Button
+          title="Add Pot"
+          onPress={() => setIsAddPotModalVisible(!isAddPotModalVisible)}
+        />
+        {isAddPotModalVisible && (
+          <AddPotModal onClose={() => setIsAddPotModalVisible(false)} />
+        )}
         {pots.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyStateText}>No pots yet.</Text>
