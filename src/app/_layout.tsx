@@ -1,7 +1,7 @@
 import { Href, Slot, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../features/auth/store/useAuthStore";
 
 export default function RootLayout() {
   const { isAuthenticated, isHydrated } = useAuthStore();

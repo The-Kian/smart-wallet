@@ -1,4 +1,9 @@
-import { render, fireEvent, waitFor, screen } from "@testing-library/react-native";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react-native";
 
 import LoginScreen from "./login";
 
@@ -29,10 +34,10 @@ describe("LoginScreen", () => {
 
   it("starts the Google sign-in flow when the primary button is pressed", async () => {
     await render(<LoginScreen />);
-    
+
     const button = screen.getByText("Sign In with Google");
-    expect(button).toBeTruthy();
-    
+    expect(button).toBeOnTheScreen();
+
     fireEvent.press(button);
 
     expect(mockPromptAsync).toHaveBeenCalledTimes(1);
@@ -40,9 +45,11 @@ describe("LoginScreen", () => {
 
   it("signs in with the sandbox profile when the bypass button is pressed", async () => {
     await render(<LoginScreen />);
-    const button = screen.getByText("Bypass with Sandbox Profile (Simulator / Web)");
+    const button = screen.getByText(
+      "Bypass with Sandbox Profile (Simulator / Web)",
+    );
 
-    expect(button).toBeTruthy();
+    expect(button).toBeOnTheScreen();
     fireEvent.press(button);
 
     expect(mockSignIn).toHaveBeenCalledWith({

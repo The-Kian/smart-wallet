@@ -1,4 +1,4 @@
-import { render, waitFor, screen } from "@testing-library/react-native";
+import { render, screen, waitFor } from "@testing-library/react-native";
 
 import RootLayout from "./_layout";
 
@@ -33,7 +33,7 @@ describe("RootLayout", () => {
   it("shows a loading state until hydration is complete", async () => {
     await render(<RootLayout />);
 
-    expect(screen.getByTestId("loading-indicator")).toBeTruthy();
+    expect(screen.getByTestId("loading-indicator")).toBeOnTheScreen();
     expect(mockReplace).not.toHaveBeenCalled();
   });
 

@@ -1,8 +1,8 @@
 import * as AuthSession from "expo-auth-session";
 import { useEffect } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { useAuthStore } from "../features/auth/store/useAuthStore";
 import { fetchGoogleUserProfile } from "../services/googleAuth";
-import { useAuthStore } from "../store/useAuthStore";
 
 const discovery = {
   authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",

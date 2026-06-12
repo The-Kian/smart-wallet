@@ -1,7 +1,7 @@
 import { Alert } from "react-native";
 import { render, fireEvent, screen } from "@testing-library/react-native";
 
-import Profile from "./profile";
+import Profile from "./ProfileScreen";
 
 const mockReplace = jest.fn();
 const mockSignOut = jest.fn();
@@ -23,7 +23,7 @@ jest.mock("expo-image", () => ({
   Image: () => null,
 }));
 
-jest.mock("../../store/useAuthStore", () => ({
+jest.mock("../features/auth/store/useAuthStore", () => ({
   useAuthStore: () => mockAuthState,
 }));
 

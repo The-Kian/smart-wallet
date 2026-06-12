@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react-native";
-import { useWalletStore } from "../store/useWalletStore";
+import { useWalletStore } from "../features/wallet/store/useWalletStore";
 import WalletScreen from "./WalletScreen";
 
 describe("WalletScreen", () => {
@@ -18,9 +18,9 @@ describe("WalletScreen", () => {
     const balanceValue = screen.getByText("£500.00");
     const ledgerHeading = screen.getByText(/Recent Activity/i);
 
-    expect(balanceText).toBeTruthy();
-    expect(balanceValue).toBeTruthy();
-    expect(ledgerHeading).toBeTruthy();
+    expect(balanceText).toBeOnTheScreen();
+    expect(balanceValue).toBeOnTheScreen();
+    expect(ledgerHeading).toBeOnTheScreen();
   });
 
   it("displays the transaction history with running balance", async () => {
@@ -39,10 +39,10 @@ describe("WalletScreen", () => {
 
     await render(<WalletScreen />);
 
-    expect(screen.getByText("Coffee")).toBeTruthy();
-    expect(screen.getByText(/11 Jun/i)).toBeTruthy();
-    expect(screen.getByText(/Bal: £475.00/i)).toBeTruthy();
-    expect(screen.getByText("-£25.00")).toBeTruthy();
+    expect(screen.getByText("Coffee")).toBeOnTheScreen();
+    expect(screen.getByText(/11 Jun/i)).toBeOnTheScreen();
+    expect(screen.getByText(/Bal: £475.00/i)).toBeOnTheScreen();
+    expect(screen.getByText("-£25.00")).toBeOnTheScreen();
   });
 
   it("shows the overdraw error banner when the wallet rejects a debit", async () => {
@@ -54,7 +54,7 @@ describe("WalletScreen", () => {
 
     expect(
       screen.getByText("Insufficient funds. Transaction declined."),
-    ).toBeTruthy();
-    expect(screen.getByText("Dismiss")).toBeTruthy();
+    ).toBeOnTheScreen();
+    expect(screen.getByText("Dismiss")).toBeOnTheScreen();
   });
 });

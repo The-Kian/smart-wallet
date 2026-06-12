@@ -1,5 +1,5 @@
 import * as AuthSession from "expo-auth-session";
-import { UserProfile } from "../store/useAuthStore";
+import { UserProfile } from "../features/auth/store/useAuthStore";
 
 // Google OAuth Configuration
 // Replace with your actual Google OAuth Client ID (Web)

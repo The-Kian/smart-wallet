@@ -1,6 +1,9 @@
 import { FlashList } from "@shopify/flash-list";
 import { StyleSheet, Text, View } from "react-native";
-import { Transaction, useWalletStore } from "../store/useWalletStore";
+import {
+  Transaction,
+  useWalletStore,
+} from "../features/wallet/store/useWalletStore";
 
 export default function WalletScreen() {
   const { balance, transactions, error, clearError } = useWalletStore();
