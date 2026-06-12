@@ -22,7 +22,7 @@ jest.mock("../services/googleAuth", () => ({
   fetchGoogleUserProfile: (...args: unknown[]) => mockFetchProfile(...args),
 }));
 
-jest.mock("../store/useAuthStore", () => ({
+jest.mock("../features/auth/store/useAuthStore", () => ({
   useAuthStore: () => ({ signIn: mockSignIn }),
 }));
 

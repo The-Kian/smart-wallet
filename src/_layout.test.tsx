@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react-native";
 
-import RootLayout from "./_layout";
-
+import RootLayout from "./app/_layout";
 const mockReplace = jest.fn();
 
 let mockSegments: string[] = ["home"];
@@ -16,7 +15,7 @@ jest.mock("expo-router", () => ({
   useSegments: () => mockSegments,
 }));
 
-jest.mock("../store/useAuthStore", () => ({
+jest.mock("./features/auth/store/useAuthStore", () => ({
   useAuthStore: () => mockAuthState,
 }));
 
