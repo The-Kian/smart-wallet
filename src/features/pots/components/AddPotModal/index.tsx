@@ -1,38 +1,39 @@
 import { useState } from "react";
-import {
-  Modal,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Modal, Pressable, Text, TextInput, View } from "react-native";
 
 import { usePotsStore } from "../../store/usePotsStore";
+import {
+  digitsToPence,
+  formatDigitsAsCurrencyInput,
+  toDigitsOnly,
+} from "../../utils/currencyInput";
 
-import styles from "./AddPotModal.styles";
 import { useWalletStore } from "@/features/wallet/store/useWalletStore";
+import styles from "./AddPotModal.styles";
 
 const AddPotModal = ({ onClose }: { onClose: () => void }) => {
   const addPot = usePotsStore((state) => state.addPot);
-  const mainBalance = useWalletStore((state) => state.balance); 
+  const mainBalance = useWalletStore((state) => state.balance);
   const [name, setName] = useState("");
-  const [initialAmount, setInitialAmount] = useState("");
+  const [amountDigits, setAmountDigits] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const amountInput = formatDigitsAsCurrencyInput(amountDigits);
+
   const handleCreatePot = () => {
-    const amount = Number(initialAmount);
+    const amountInPence = digitsToPence(amountDigits);
 
     if (!name.trim()) {
       setError("Pot name is required");
       return;
     }
 
-    if (!Number.isFinite(amount) || amount <= 0) {
+    if (!Number.isFinite(amountInPence) || amountInPence <= 0) {
       setError("Amount must be a positive number");
       return;
     }
 
-    if(amount > mainBalance) {
+    if (amountInPence > mainBalance) {
       setError("Amount exceeds main wallet balance");
       return;
     }
@@ -40,7 +41,7 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
     addPot({
       id: `pot-${Date.now()}`,
       name: name.trim(),
-      balance: amount,
+      balance: amountInPence,
     });
     setError(null);
     onClose();
@@ -75,11 +76,11 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
             <Text style={styles.label}>Initial amount</Text>
             <TextInput
               keyboardType="numeric"
-              onChangeText={setInitialAmount}
-              placeholder="Initial amount in £12.34 format"
+              onChangeText={(value) => setAmountDigits(toDigitsOnly(value))}
+              placeholder="Initial amount"
               placeholderTextColor="#94A3B8"
               style={styles.input}
-              value={initialAmount}
+              value={amountInput}
             />
           </View>
 
@@ -102,6 +103,5 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
     </Modal>
   );
 };
-
 
 export default AddPotModal;

@@ -83,6 +83,26 @@ describe("usePotsStore", () => {
     expect(useWalletStore.getState().balance).toBe(mainBalance - 10_000);
   });
 
+  it("allows transferring funds from wallet to an existing pot", () => {
+    const mainBalance = useWalletStore.getState().balance;
+
+    usePotsStore.getState().transferToPot("pot-0", 5_000);
+
+    expect(usePotsStore.getState().pots).toContainEqual(
+      expect.objectContaining({ id: "pot-0", balance: 30_000 }),
+    );
+    expect(useWalletStore.getState().balance).toBe(mainBalance - 5_000);
+  });
+
+  it("allows renaming an existing pot", () => {
+    usePotsStore.getState().renamePot("pot-0", "Emergency Fund");
+
+    expect(usePotsStore.getState().pots).toContainEqual(
+      expect.objectContaining({ id: "pot-0", name: "Emergency Fund" }),
+    );
+    expect(usePotsStore.getState().error).toBeNull();
+  });
+
   it("returns an error when trying to add a pot with insufficient funds", () => {
     const mainBalance = useWalletStore.getState().balance;
     const newPot = {

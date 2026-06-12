@@ -14,12 +14,15 @@ interface PotsState {
   pots: Pot[];
   error: string | null;
   addPot: (pot: Pot) => void;
+  renamePot: (potId: string, name: string) => void;
+  transferToPot: (potId: string, amountInPence: number) => void;
   transferToWallet: (potId: string, amountInPence: number) => void;
   deletePot: (potId: string) => void;
   clearError: () => void;
 }
 
 const insufficientFundsError = "Insufficient funds to create this pot.";
+const insufficientWalletFundsError = "Insufficient funds in main wallet.";
 const insufficientPotFundsError = "Insufficient funds in this pot.";
 const potNotFoundError = "Pot not found.";
 
@@ -43,6 +46,62 @@ export const usePotsStore = create<PotsState>()(
 
         set((state) => ({
           pots: [...state.pots, pot],
+          error: null,
+        }));
+      },
+
+      renamePot: (potId, name) => {
+        const trimmedName = name.trim();
+        const pot = get().pots.find((currentPot) => currentPot.id === potId);
+
+        if (!pot) {
+          set({ error: potNotFoundError });
+          return;
+        }
+
+        if (!trimmedName) {
+          set({ error: "Pot name is required." });
+          return;
+        }
+
+        set((state) => ({
+          pots: state.pots.map((currentPot) =>
+            currentPot.id === potId
+              ? { ...currentPot, name: trimmedName }
+              : currentPot,
+          ),
+          error: null,
+        }));
+      },
+
+      transferToPot: (potId, amountInPence) => {
+        const pot = get().pots.find((currentPot) => currentPot.id === potId);
+        const walletBalance = useWalletStore.getState().balance;
+
+        if (!pot) {
+          set({ error: potNotFoundError });
+          return;
+        }
+
+        if (walletBalance < amountInPence) {
+          set({ error: insufficientWalletFundsError });
+          return;
+        }
+
+        useWalletStore
+          .getState()
+          .executeTransaction(
+            amountInPence,
+            `Transfer to ${pot.name}`,
+            "debit",
+          );
+
+        set((state) => ({
+          pots: state.pots.map((currentPot) =>
+            currentPot.id === potId
+              ? { ...currentPot, balance: currentPot.balance + amountInPence }
+              : currentPot,
+          ),
           error: null,
         }));
       },
@@ -79,7 +138,6 @@ export const usePotsStore = create<PotsState>()(
       },
 
       deletePot: (potId) => {
-        console.log(`usePotsStore: Attempting to delete pot with ID: ${potId}`);
         const pot = get().pots.find((currentPot) => currentPot.id === potId);
 
         if (!pot) {

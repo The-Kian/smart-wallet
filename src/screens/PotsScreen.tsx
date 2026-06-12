@@ -1,9 +1,10 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, Pressable, StyleSheet, Text, View } from "react-native";
 
 import AddPotModal from "@/features/pots/components/AddPotModal";
 import { useState } from "react";
 import { usePotsStore } from "../features/pots/store/usePotsStore";
 import { useWalletStore } from "../features/wallet/store/useWalletStore";
+import ManagePotModal from "@/features/pots/components/ManagePotModal";
 
 const formatCurrency = (pence: number) =>
   new Intl.NumberFormat("en-GB", {
@@ -15,6 +16,9 @@ export default function PotsScreen() {
   const walletBalance = useWalletStore((state) => state.balance);
   const pots = usePotsStore((state) => state.pots);
   const [isAddPotModalVisible, setIsAddPotModalVisible] = useState(false);
+  const [isManagePotModalVisible, setIsManagePotModalVisible] = useState(false);
+  const [selectedPot, setSelectedPot] = useState<string | null>(null);
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -36,10 +40,16 @@ export default function PotsScreen() {
         <Text style={styles.sectionTitle}>Your pots</Text>
         <Button
           title="Add Pot"
-          onPress={() => setIsAddPotModalVisible(!isAddPotModalVisible)}
+          onPress={() => setIsAddPotModalVisible(true)}
         />
         {isAddPotModalVisible && (
           <AddPotModal onClose={() => setIsAddPotModalVisible(false)} />
+        )}
+        {isManagePotModalVisible && selectedPot && (
+          <ManagePotModal
+            potId={selectedPot}
+            onClose={() => setIsManagePotModalVisible(false)}
+          />
         )}
         {pots.length === 0 ? (
           <View style={styles.emptyState}>
@@ -47,12 +57,19 @@ export default function PotsScreen() {
           </View>
         ) : (
           pots.map((pot) => (
-            <View key={pot.id} style={styles.potCard}>
+            <Pressable
+              key={pot.id}
+              style={styles.potCard}
+              onPress={() => {
+                setSelectedPot(pot.id);
+                setIsManagePotModalVisible(true);
+              }}
+            >
               <Text style={styles.potName}>{pot.name}</Text>
               <Text style={styles.potBalance}>
                 {formatCurrency(pot.balance)}
               </Text>
-            </View>
+            </Pressable>
           ))
         )}
       </View>

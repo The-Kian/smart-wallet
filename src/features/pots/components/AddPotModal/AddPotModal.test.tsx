@@ -3,7 +3,7 @@ import AddPotModal from ".";
 import { usePotsStore } from "../../store/usePotsStore";
 
 const mockAddPot = jest.fn();
-jest.mock("../store/usePotsStore", () => ({
+jest.mock("../../store/usePotsStore", () => ({
   usePotsStore: (selector?: (s: { addPot: jest.Mock }) => unknown) => {
     const state = { addPot: mockAddPot };
     return selector ? selector(state) : state;
@@ -35,7 +35,7 @@ describe("AddPotModal", () => {
       screen.getByPlaceholderText("Pot name"),
       "Holiday Fund",
     );
-    await userEvent.type(screen.getByPlaceholderText("Initial amount"), "-50");
+    await userEvent.type(screen.getByPlaceholderText("Initial amount"), "0");
     await userEvent.press(screen.getByText("Create Pot"));
     expect(
       screen.getByText("Amount must be a positive number"),
