@@ -1,6 +1,15 @@
+import ScreenHeader from "@/components/ui/ScreenHeader";
+import ProfileInfoRow from "@/features/profile/components/ProfileInfoRow";
 import { Image } from "expo-image";
-import { Href, useRouter } from "expo-router";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import {
+  Alert,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useAuthStore } from "../features/auth/store/useAuthStore";
 
 export default function ProfileScreen() {
@@ -8,17 +17,24 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   const handleSignOut = () => {
-    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
-      { text: "Cancel", onPress: () => {}, style: "cancel" },
-      {
-        text: "Sign Out",
-        onPress: () => {
-          signOut();
-          router.replace("/login" as Href);
+    if (Platform.OS === "web") {
+      if (window.confirm("Are you sure you want to sign out?")) {
+        signOut();
+        router.replace("/login");
+      }
+    } else {
+      Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+        { text: "Cancel", onPress: () => {}, style: "cancel" },
+        {
+          text: "Sign Out",
+          onPress: () => {
+            signOut();
+            router.replace("/login");
+          },
+          style: "destructive",
         },
-        style: "destructive",
-      },
-    ]);
+      ]);
+    }
   };
 
   if (!user) {
@@ -31,9 +47,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
-      </View>
+      <ScreenHeader title="Profile" />
 
       <View style={styles.profileCard}>
         <View style={styles.avatarContainer}>
@@ -45,15 +59,8 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.infoSection}>
-          <View style={styles.infoItem}>
-            <Text style={styles.label}>Name</Text>
-            <Text style={styles.value}>{user.name}</Text>
-          </View>
-
-          <View style={styles.infoItem}>
-            <Text style={styles.label}>Email</Text>
-            <Text style={styles.value}>{user.email}</Text>
-          </View>
+          <ProfileInfoRow label="Name" value={user.name} />
+          <ProfileInfoRow label="Email" value={user.email} />
         </View>
 
         <Pressable
@@ -84,14 +91,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
   },
-  header: {
-    marginBottom: 24,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#111111",
-  },
   profileCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
@@ -116,22 +115,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 24,
     gap: 16,
-  },
-  infoItem: {
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#666666",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 4,
-  },
-  value: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#111111",
   },
   signOutButton: {
     width: "100%",

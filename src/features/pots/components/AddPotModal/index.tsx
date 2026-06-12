@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Pressable, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
 
 import { usePotsStore } from "../../store/usePotsStore";
 import {
@@ -54,6 +54,10 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
       transparent={true}
       visible={true}
     >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
       <View style={styles.backdrop}>
         <View style={styles.card}>
           <Text style={styles.title}>Create a new pot</Text>
@@ -100,6 +104,7 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
           </View>
         </View>
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };

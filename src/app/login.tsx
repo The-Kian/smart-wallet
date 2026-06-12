@@ -1,8 +1,12 @@
 import * as AuthSession from "expo-auth-session";
 import { useEffect } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import AuthActionCard from "@/features/auth/components/AuthActionCard";
 import { useAuthStore } from "../features/auth/store/useAuthStore";
 import { fetchGoogleUserProfile } from "../services/googleAuth";
+import * as WebBrowser from "expo-web-browser";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const discovery = {
   authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
@@ -88,33 +92,10 @@ export default function LoginScreen() {
       </View>
 
       <View style={styles.actionSection}>
-        <View style={styles.card}>
-          <Pressable
-            onPress={handleRealGoogleSignIn}
-            accessibilityRole="button"
-            style={({ pressed }) => [
-              styles.primaryAuthButton,
-              pressed && styles.buttonPressed,
-            ]}
-          >
-            <Text style={styles.primaryAuthButtonText}>
-              Sign In with Google
-            </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={handleMockSignIn}
-            accessibilityRole="button"
-            style={({ pressed }) => [
-              styles.mockButton,
-              pressed && styles.buttonPressed,
-            ]}
-          >
-            <Text style={styles.mockButtonText}>
-              Bypass with Sandbox Profile (Simulator / Web)
-            </Text>
-          </Pressable>
-        </View>
+        <AuthActionCard
+          onGoogleSignIn={handleRealGoogleSignIn}
+          onSandboxSignIn={handleMockSignIn}
+        />
       </View>
     </View>
   );
@@ -145,44 +126,5 @@ const styles = StyleSheet.create({
   },
   actionSection: {
     gap: 16,
-  },
-  card: {
-    gap: 12,
-    borderRadius: 12,
-    padding: 8,
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
-  },
-  primaryAuthButton: {
-    backgroundColor: "#4285F4",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    alignItems: "center",
-  },
-  mockButton: {
-    backgroundColor: "#F3F4F6",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    alignItems: "center",
-  },
-  primaryAuthButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  mockButtonText: {
-    color: "#374151",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  buttonPressed: {
-    opacity: 0.85,
   },
 });

@@ -1,53 +1,19 @@
-import { FlashList } from "@shopify/flash-list";
-import { StyleSheet, Text, View } from "react-native";
-import {
-  Transaction,
-  useWalletStore,
-} from "../features/wallet/store/useWalletStore";
+import EmptyStateCard from "@/components/ui/EmptyStateCard";
+import TransactionRow from "@/features/wallet/components/TransactionRow";
+import { formatCurrencyFromPence } from "@/utils/formatCurrency";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useWalletStore } from "../features/wallet/store/useWalletStore";
 
 export default function WalletScreen() {
   const { balance, transactions, error, clearError } = useWalletStore();
-
-  const formatCurrency = (pence: number) => {
-    return new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GBP",
-    }).format(pence / 100);
-  };
-
-  const renderTransaction = ({ item }: { item: Transaction }) => {
-    const isCredit = item.type === "credit";
-    const formattedDate = new Date(item.date).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-    });
-
-    return (
-      <View style={styles.transactionRow}>
-        <View style={styles.transactionInfo}>
-          <Text style={styles.transactionDescription}>{item.description}</Text>
-          <Text style={styles.transactionDate}>
-            {formattedDate} • Bal: {formatCurrency(item.runningBalance)}
-          </Text>
-        </View>
-        <Text
-          style={[
-            styles.transactionAmount,
-            { color: isCredit ? "#10B981" : "#111827" },
-          ]}
-        >
-          {isCredit ? "+" : "-"}
-          {formatCurrency(item.amount)}
-        </Text>
-      </View>
-    );
-  };
 
   return (
     <View style={styles.container}>
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Total Balance</Text>
-        <Text style={styles.balanceValue}>{formatCurrency(balance)}</Text>
+        <Text style={styles.balanceValue}>
+          {formatCurrencyFromPence(balance)}
+        </Text>
       </View>
 
       {error && (
@@ -62,13 +28,13 @@ export default function WalletScreen() {
       <View style={styles.ledgerContainer}>
         <Text style={styles.ledgerTitle}>Recent Activity</Text>
         {transactions.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyStateText}>No transactions yet.</Text>
+          <View style={styles.emptyStateWrap}>
+            <EmptyStateCard message="No transactions yet." />
           </View>
         ) : (
-          <FlashList
+          <FlatList
             data={transactions}
-            renderItem={renderTransaction}
+            renderItem={({ item }) => <TransactionRow item={item} />}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
           />
@@ -138,39 +104,7 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 20,
   },
-  transactionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
-  },
-  transactionInfo: {
-    flex: 1,
-    paddingRight: 16,
-  },
-  transactionDescription: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 4,
-  },
-  transactionDate: {
-    fontSize: 13,
-    color: "#6B7280",
-  },
-  transactionAmount: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  emptyState: {
-    padding: 32,
-    alignItems: "center",
-  },
-  emptyStateText: {
-    color: "#9CA3AF",
-    fontSize: 15,
+  emptyStateWrap: {
+    padding: 20,
   },
 });

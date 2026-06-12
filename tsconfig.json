@@ -3,7 +3,7 @@
 
   "compilerOptions": {
     "strict": true,
-    "lib": ["ES2024"],
+    "lib": ["dom", "esnext"],
     "types": ["jest", "node"],
     "paths": {
       "@/*": ["./src/*"],
