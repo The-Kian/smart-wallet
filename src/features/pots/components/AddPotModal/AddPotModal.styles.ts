@@ -60,33 +60,59 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
   },
+  verticalActionStack: {
+    marginTop: 24,
+    gap: 12,
+    width: "100%",
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  primaryButton: {
+    flex: 1,
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  depositBtn: { backgroundColor: "#0F766E" },
+  withdrawBtn: { backgroundColor: "#0284C7" },
   secondaryButton: {
     flex: 1,
     borderWidth: 1,
     borderColor: "#CBD5E1",
     borderRadius: 12,
+    paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
     backgroundColor: "#FFFFFF",
   },
-  secondaryButtonText: {
-    color: "#334155",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  primaryButton: {
-    flex: 1,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    backgroundColor: "#0F766E",
-  },
+  deleteBtn: { borderColor: "#FCA5A5" },
   primaryButtonText: {
     color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "700",
+  },
+  secondaryButtonText: {
+    color: "#334155",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  deleteButtonText: {
+    color: "#DC2626",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  cancelLink: {
+    alignItems: "center",
+    paddingVertical: 8,
+    marginTop: 4,
+  },
+  cancelLinkText: {
+    color: "#64748B",
+    fontSize: 15,
+    fontWeight: "600",
   },
 });
 

@@ -1,14 +1,9 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import EmptyStateCard from "@/components/ui/EmptyStateCard";
+import { type Pot } from "@/features/pots/store/usePotsStore";
 import { formatCurrencyFromPence } from "@/utils/formatCurrency";
-
-type Pot = {
-  id: string;
-  name: string;
-  balance: number;
-};
 
 type PotsListProps = {
   pots: Pot[];

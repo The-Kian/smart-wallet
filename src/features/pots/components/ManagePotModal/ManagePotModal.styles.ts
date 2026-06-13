@@ -87,6 +87,38 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
+  verticalActionStack: {
+    marginTop: 20,
+    gap: 10,
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  depositButton: {
+    backgroundColor: "#0F766E",
+  },
+  withdrawButton: {
+    backgroundColor: "#1D4ED8",
+  },
+  deleteButton: {
+    borderColor: "#FCA5A5",
+    backgroundColor: "#FEF2F2",
+  },
+  deleteButtonText: {
+    color: "#B91C1C",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  cancelLink: {
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  cancelLinkText: {
+    color: "#64748B",
+    fontSize: 14,
+    fontWeight: "600",
+  },
 });
 
 export default styles;

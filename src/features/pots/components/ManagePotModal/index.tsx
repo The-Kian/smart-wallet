@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import { usePotsStore } from "../../store/usePotsStore";
 import {
@@ -124,70 +132,74 @@ const ManagePotModal = ({
       visible={true}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-      <View style={styles.backdrop}>
-        <View style={styles.card}>
-          <Text style={styles.title}>Manage Pot</Text>
-          <Text style={styles.subtitle}>
-            Update the name, deposit or withdraw funds, or delete this pot.
-          </Text>
+        <View style={styles.backdrop}>
+          <View style={styles.card}>
+            <Text style={styles.title}>Manage Pot</Text>
+            <Text style={styles.subtitle}>
+              Update the name, deposit or withdraw funds, or delete this pot.
+            </Text>
+            <View style={styles.fieldGroup}>
+              <Text style={styles.label}>Pot name</Text>
+              <TextInput
+                onChangeText={setName}
+                placeholder="Pot name"
+                placeholderTextColor="#94A3B8"
+                style={styles.input}
+                value={name}
+              />
+            </View>
+            <View style={styles.fieldGroup}>
+              <Text style={styles.label}>Amount</Text>
+              <TextInput
+                keyboardType="numeric"
+                onChangeText={(value) => setAmountDigits(toDigitsOnly(value))}
+                placeholder="Amount"
+                placeholderTextColor="#94A3B8"
+                style={styles.input}
+                value={amountInput}
+              />
+            </View>
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            <View style={styles.verticalActionStack}>
+              <View style={styles.actionRow}>
+                <Pressable
+                  onPress={handleDepositToPot}
+                  style={[styles.primaryButton, styles.depositButton]}
+                >
+                  <Text style={styles.primaryButtonText}>Deposit</Text>
+                </Pressable>
+                <Pressable
+                  onPress={handleWithdrawFromPot}
+                  style={[styles.primaryButton, styles.withdrawButton]}
+                >
+                  <Text style={styles.primaryButtonText}>Withdraw</Text>
+                </Pressable>
+              </View>
 
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Pot name</Text>
-            <TextInput
-              onChangeText={setName}
-              placeholder="Pot name"
-              placeholderTextColor="#94A3B8"
-              style={styles.input}
-              value={name}
-            />
-          </View>
+              <View style={styles.actionRow}>
+                <Pressable
+                  onPress={handleRenamePot}
+                  style={styles.secondaryButton}
+                >
+                  <Text style={styles.secondaryButtonText}>Rename Pot</Text>
+                </Pressable>
+                <Pressable
+                  onPress={handleDeletePot}
+                  style={[styles.secondaryButton, styles.deleteButton]}
+                >
+                  <Text style={styles.deleteButtonText}>Delete Pot</Text>
+                </Pressable>
+              </View>
 
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Amount</Text>
-            <TextInput
-              keyboardType="numeric"
-              onChangeText={(value) => setAmountDigits(toDigitsOnly(value))}
-              placeholder="Amount"
-              placeholderTextColor="#94A3B8"
-              style={styles.input}
-              value={amountInput}
-            />
-          </View>
-
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-          <View style={styles.actions}>
-            <Pressable
-              onPress={onClose}
-              style={styles.secondaryButton}
-              testID="close-button"
-            >
-              <Text style={styles.secondaryButtonText}>Cancel</Text>
-            </Pressable>
-            <Pressable onPress={handleRenamePot} style={styles.primaryButton}>
-              <Text style={styles.primaryButtonText}>Rename Pot</Text>
-            </Pressable>
-            <Pressable
-              onPress={handleDepositToPot}
-              style={styles.primaryButton}
-            >
-              <Text style={styles.primaryButtonText}>Deposit</Text>
-            </Pressable>
-            <Pressable
-              onPress={handleWithdrawFromPot}
-              style={styles.primaryButton}
-            >
-              <Text style={styles.primaryButtonText}>Withdraw</Text>
-            </Pressable>
-            <Pressable onPress={handleDeletePot} style={styles.primaryButton}>
-              <Text style={styles.primaryButtonText}>Delete Pot</Text>
-            </Pressable>
+              <Pressable onPress={onClose} style={styles.cancelLink}>
+                <Text style={styles.cancelLinkText}>Close Options</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
-      </View>
       </KeyboardAvoidingView>
     </Modal>
   );
