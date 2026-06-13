@@ -2,14 +2,8 @@ import ScreenHeader from "@/components/ui/ScreenHeader";
 import ProfileInfoRow from "@/features/profile/components/ProfileInfoRow";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import {
-  Alert,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { confirm } from "@/utils/confirm";
 import { useAuthStore } from "../features/auth/store/useAuthStore";
 
 export default function ProfileScreen() {
@@ -17,24 +11,16 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   const handleSignOut = () => {
-    if (Platform.OS === "web") {
-      if (window.confirm("Are you sure you want to sign out?")) {
+    confirm({
+      title: "Sign Out",
+      message: "Are you sure you want to sign out?",
+      confirmLabel: "Sign Out",
+      confirmStyle: "destructive",
+      onConfirm: () => {
         signOut();
         router.replace("/login");
-      }
-    } else {
-      Alert.alert("Sign Out", "Are you sure you want to sign out?", [
-        { text: "Cancel", onPress: () => {}, style: "cancel" },
-        {
-          text: "Sign Out",
-          onPress: () => {
-            signOut();
-            router.replace("/login");
-          },
-          style: "destructive",
-        },
-      ]);
-    }
+      },
+    });
   };
 
   if (!user) {
