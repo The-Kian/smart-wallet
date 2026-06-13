@@ -6,9 +6,12 @@ import { useAuthStore } from "../features/auth/store/useAuthStore";
 import { useWalletStore } from "../features/wallet/store/useWalletStore";
 import { usePotsStore } from "../features/pots/store/usePotsStore";
 
+const ioniconsFont = require("../../assets/fonts/Ionicons.ttf");
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    "Ionicons": "https://code.ionicframework.com/ionicons/2.0.1/fonts/ionicons.ttf",
+    Ionicons: ioniconsFont,
+    ionicons: ioniconsFont, 
   });
 
   const { isAuthenticated, isHydrated: isAuthHydrated } = useAuthStore();
