@@ -28,7 +28,8 @@ The brief allowed for scoping decisions to prioritize quality over quantity. I c
 - **Language:** TypeScript for strict type safety across state and UI components.
 - **State Management:** **Zustand**.
   - _Why Zustand?_ It provides a lightweight, boilerplate-free way to manage global state compared to Redux Toolkit. It integrates seamlessly with `@react-native-async-storage/async-storage` via middleware to persist the user's session, wallet balance, and pots between app launches.
-- **Authentication:** `@react-native-google-signin/google-signin` for native mobile builds, and `expo-auth-session` for the web target.
+  - _Universal Rehydration Gating:_ To completely prevent a "Flash of Unhydrated State" (FOUC), where default seeded balances or logged-out UI structures are briefly rendered before disk rehydration finishes, the Root Layout blocks the main application mounting screen until the Auth, Wallet, and Pots stores are fully loaded from storage.
+- **Authentication:** @react-native-google-signin/google-signin for native mobile builds, and `expo-auth-session` for the web target.
 - **=List Rendering (FlatList vs. FlashList):**: I chose to use React Native's standard FlatList rather than introducing Shopify's FlashList. While FlashList offers superior view recycling and progressive rendering for complex screens, the datasets in this application (a handful of savings pots and recent transactions) are very small. Sticking with FlatList keeps the dependency tree lean, avoids the overhead of additional native modules for the take-home task, and still delivers a perfectly smooth experience for this specific use case.
 - **Package Manager:** `pnpm`
 

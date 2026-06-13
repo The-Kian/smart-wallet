@@ -13,12 +13,14 @@ export interface Pot {
 interface PotsState {
   pots: Pot[];
   error: string | null;
+  isHydrated: boolean;
   addPot: (pot: Pot) => void;
   renamePot: (potId: string, name: string) => void;
   transferToPot: (potId: string, amountInPence: number) => void;
   transferToWallet: (potId: string, amountInPence: number) => void;
   deletePot: (potId: string) => void;
   clearError: () => void;
+  setHydrated: (hydrated: boolean) => void;
 }
 
 const insufficientFundsError = "Insufficient funds to create this pot.";
@@ -31,6 +33,7 @@ export const usePotsStore = create<PotsState>()(
     (set, get) => ({
       pots: [],
       error: null,
+      isHydrated: false,
 
       addPot: (pot) => {
         const walletBalance = useWalletStore.getState().balance;
@@ -158,10 +161,21 @@ export const usePotsStore = create<PotsState>()(
       },
 
       clearError: () => set({ error: null }),
+      setHydrated: (hydrated) => set({ isHydrated: hydrated }),
     }),
     {
       name: "smart-wallet-pots",
       storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        pots: state.pots,
+      }),
+      onRehydrateStorage: () => {
+        return (state) => {
+          if (state) {
+            state.setHydrated(true);
+          }
+        };
+      },
     },
   ),
 );

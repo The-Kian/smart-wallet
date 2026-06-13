@@ -14,6 +14,7 @@ export interface Transaction {
 interface WalletState {
   balance: number; // In pence (e.g., 50000 = £500.00)
   transactions: Transaction[];
+  isHydrated: boolean;
   executeTransaction: (
     amountInPence: number,
     description: string,
@@ -21,6 +22,7 @@ interface WalletState {
   ) => void;
   error: string | null;
   clearError: () => void;
+  setHydrated: (hydrated: boolean) => void;
 }
 
 export const useWalletStore = create<WalletState>()(
@@ -29,6 +31,7 @@ export const useWalletStore = create<WalletState>()(
       balance: 50000,
       transactions: [],
       error: null,
+      isHydrated: false,
 
       executeTransaction: (
         amountInPence: number,
@@ -67,10 +70,22 @@ export const useWalletStore = create<WalletState>()(
       },
 
       clearError: () => set({ error: null }),
+      setHydrated: (hydrated) => set({ isHydrated: hydrated }),
     }),
     {
       name: "smart-wallet-data",
       storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        balance: state.balance,
+        transactions: state.transactions,
+      }),
+      onRehydrateStorage: () => {
+        return (state) => {
+          if (state) {
+            state.setHydrated(true);
+          }
+        };
+      },
     },
   ),
 );

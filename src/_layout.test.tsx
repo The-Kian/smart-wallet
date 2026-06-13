@@ -8,6 +8,8 @@ let mockAuthState = {
   isAuthenticated: false,
   isHydrated: false,
 };
+let mockWalletState = { isHydrated: false };
+let mockPotsState = { isHydrated: false };
 
 jest.mock("expo-router", () => ({
   Slot: () => null,
@@ -19,6 +21,14 @@ jest.mock("./features/auth/store/useAuthStore", () => ({
   useAuthStore: () => mockAuthState,
 }));
 
+jest.mock("./features/wallet/store/useWalletStore", () => ({
+  useWalletStore: () => mockWalletState,
+}));
+
+jest.mock("./features/pots/store/usePotsStore", () => ({
+  usePotsStore: () => mockPotsState,
+}));
+
 describe("RootLayout", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -27,6 +37,8 @@ describe("RootLayout", () => {
       isAuthenticated: false,
       isHydrated: false,
     };
+    mockWalletState = { isHydrated: false };
+    mockPotsState = { isHydrated: false };
   });
 
   it("shows a loading state until hydration is complete", async () => {
@@ -41,6 +53,8 @@ describe("RootLayout", () => {
       isAuthenticated: false,
       isHydrated: true,
     };
+    mockWalletState = { isHydrated: true };
+    mockPotsState = { isHydrated: true };
 
     await render(<RootLayout />);
 
@@ -55,6 +69,8 @@ describe("RootLayout", () => {
       isAuthenticated: true,
       isHydrated: true,
     };
+    mockWalletState = { isHydrated: true };
+    mockPotsState = { isHydrated: true };
 
     await render(<RootLayout />);
 
