@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Transaction } from "@/features/wallet/store/useWalletStore";
 import { formatCurrencyFromPence } from "@/utils/formatCurrency";
@@ -16,6 +17,13 @@ export default function TransactionRow({ item }: TransactionRowProps) {
 
   return (
     <View style={styles.transactionRow}>
+      <View style={[styles.avatarIcon, { backgroundColor: isCredit ? "#ECFDF5" : "#F7FEE7" }]}>
+        <Ionicons
+          name={isCredit ? "arrow-down-outline" : "arrow-up-outline"}
+          size={18}
+          color={isCredit ? "#059669" : "#4D7C0F"}
+        />
+      </View>
       <View style={styles.transactionInfo}>
         <Text style={styles.transactionDescription}>{item.description}</Text>
         <Text style={styles.transactionDate}>
@@ -44,6 +52,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#F3F4F6",
+  },
+  avatarIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
   transactionInfo: {
     flex: 1,

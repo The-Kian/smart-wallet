@@ -62,3 +62,7 @@ If I had an additional week to work on this project, I would focus on:
    git clone <your-repo-url>
    cd smart-wallet
    ```
+2. Run the project:
+    pnpm ios
+    pnpm android 
+    pnpm web

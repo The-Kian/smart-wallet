@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import EmptyStateCard from "@/components/ui/EmptyStateCard";
 import { formatCurrencyFromPence } from "@/utils/formatCurrency";
@@ -27,6 +28,9 @@ export default function PotsList({ pots, onSelectPot }: PotsListProps) {
           onPress={() => onSelectPot(pot.id)}
           style={styles.potCard}
         >
+          <View style={styles.potIconContainer}>
+            <Ionicons name="leaf" size={20} color="#0F766E" />
+          </View>
           <Text style={styles.potName}>{pot.name}</Text>
           <Text style={styles.potBalance}>
             {formatCurrencyFromPence(pot.balance)}
@@ -51,6 +55,15 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 3 },
     elevation: 1,
+  },
+  potIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F0FDFA",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
   potName: {
     fontSize: 17,

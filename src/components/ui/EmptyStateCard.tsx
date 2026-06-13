@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 type EmptyStateCardProps = {
   message: string;
@@ -7,6 +8,7 @@ type EmptyStateCardProps = {
 export default function EmptyStateCard({ message }: EmptyStateCardProps) {
   return (
     <View style={styles.container}>
+      <Ionicons name="documents-outline" size={32} color="#CBD5E1" style={styles.icon} />
       <Text style={styles.message}>{message}</Text>
     </View>
   );
@@ -18,6 +20,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
+  },
+  icon: {
+    marginBottom: 8,
   },
   message: {
     color: "#94A3B8",
