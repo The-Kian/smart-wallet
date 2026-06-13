@@ -1,19 +1,19 @@
 import { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  Text,
-  TextInput,
-  View,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    Pressable,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
 import { usePotsStore } from "../../store/usePotsStore";
 import {
-  digitsToPence,
-  formatDigitsAsCurrencyInput,
-  toDigitsOnly,
+    digitsToPence,
+    formatDigitsAsCurrencyInput,
+    toDigitsOnly,
 } from "../../utils/currencyInput";
 
 import { useWalletStore } from "@/features/wallet/store/useWalletStore";
@@ -62,9 +62,13 @@ const ManagePotModal = ({
       return;
     }
 
-    renamePot(pot.id, name.trim());
-    setError(null);
-    onClose();
+    const success = renamePot(pot.id, name.trim());
+    if (success) {
+      setError(null);
+      onClose();
+    } else {
+      setError(usePotsStore.getState().error || "Failed to rename pot");
+    }
   };
 
   const handleWithdrawFromPot = () => {
@@ -84,10 +88,14 @@ const ManagePotModal = ({
       return;
     }
 
-    transferToWallet(pot.id, amount);
-    setAmountDigits("");
-    setError(null);
-    onClose();
+    const success = transferToWallet(pot.id, amount);
+    if (success) {
+      setAmountDigits("");
+      setError(null);
+      onClose();
+    } else {
+      setError(usePotsStore.getState().error || "Failed to withdraw from pot");
+    }
   };
 
   const handleDepositToPot = () => {
@@ -107,10 +115,14 @@ const ManagePotModal = ({
       return;
     }
 
-    transferToPot(pot.id, amount);
-    setAmountDigits("");
-    setError(null);
-    onClose();
+    const success = transferToPot(pot.id, amount);
+    if (success) {
+      setAmountDigits("");
+      setError(null);
+      onClose();
+    } else {
+      setError(usePotsStore.getState().error || "Failed to deposit to pot");
+    }
   };
 
   const handleDeletePot = () => {
@@ -119,9 +131,13 @@ const ManagePotModal = ({
       return;
     }
 
-    deletePot(pot.id);
-    setError(null);
-    onClose();
+    const success = deletePot(pot.id);
+    if (success) {
+      setError(null);
+      onClose();
+    } else {
+      setError(usePotsStore.getState().error || "Failed to delete pot");
+    }
   };
 
   return (
@@ -194,7 +210,11 @@ const ManagePotModal = ({
                 </Pressable>
               </View>
 
-              <Pressable onPress={onClose} style={styles.cancelLink}>
+              <Pressable
+                onPress={onClose}
+                style={styles.cancelLink}
+                testID="close-button"
+              >
                 <Text style={styles.cancelLinkText}>Close Options</Text>
               </Pressable>
             </View>

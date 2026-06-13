@@ -1,6 +1,7 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { useWalletStore } from "../../wallet/store/useWalletStore";
 
 export interface Voucher {
@@ -49,7 +50,7 @@ export const useVouchersStore = create<VouchersState>()(
         }
         const generatedCode = `VCHX-${randomPart}`;
 
-        useWalletStore
+        const transactionSuccess = useWalletStore
           .getState()
           .executeTransaction(
             faceValueInPence,
@@ -57,12 +58,19 @@ export const useVouchersStore = create<VouchersState>()(
             "debit",
           );
 
+        if (!transactionSuccess) {
+          set({
+            error: "Insufficient wallet funds for this voucher purchase.",
+          });
+          return false;
+        }
+
         // Calculate earned points rewards (1 point per whole pound spent)
         const purchaseAmountInPounds = Math.floor(faceValueInPence / 100);
         const pointsEarned = purchaseAmountInPounds;
 
         const newVoucher: Voucher = {
-          id: `vch-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
+          id: Crypto.randomUUID(),
           code: generatedCode,
           title,
           faceValue: faceValueInPence,
@@ -99,13 +107,18 @@ export const useVouchersStore = create<VouchersState>()(
         // 100 points = £1.00 (100 pence). Therefore, 1 point = 1 pence credit.
         const creditAmountInPence = pointsToRedeem;
 
-        useWalletStore
+        const transactionSuccess = useWalletStore
           .getState()
           .executeTransaction(
             creditAmountInPence,
             "Loyalty Points Redemption",
             "credit",
           );
+
+        if (!transactionSuccess) {
+          set({ error: "Failed to credit wallet with points redemption." });
+          return false;
+        }
 
         set((state) => ({
           pointsBalance: state.pointsBalance - pointsToRedeem,

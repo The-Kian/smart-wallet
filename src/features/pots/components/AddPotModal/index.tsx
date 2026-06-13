@@ -1,5 +1,14 @@
+import * as Crypto from "expo-crypto";
 import { useState } from "react";
-import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import { usePotsStore } from "../../store/usePotsStore";
 import {
@@ -38,13 +47,18 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
       return;
     }
 
-    addPot({
-      id: `pot-${Date.now()}`,
+    const success = addPot({
+      id: Crypto.randomUUID(),
       name: name.trim(),
       balance: amountInPence,
     });
-    setError(null);
-    onClose();
+
+    if (success) {
+      setError(null);
+      onClose();
+    } else {
+      setError(usePotsStore.getState().error || "Failed to create pot");
+    }
   };
 
   return (
@@ -55,55 +69,55 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
       visible={true}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-      <View style={styles.backdrop}>
-        <View style={styles.card}>
-          <Text style={styles.title}>Create a new pot</Text>
-          <Text style={styles.subtitle}>
-            Set a name and starting amount for your savings goal.
-          </Text>
+        <View style={styles.backdrop}>
+          <View style={styles.card}>
+            <Text style={styles.title}>Create a new pot</Text>
+            <Text style={styles.subtitle}>
+              Set a name and starting amount for your savings goal.
+            </Text>
 
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Pot name</Text>
-            <TextInput
-              onChangeText={setName}
-              placeholder="Pot name"
-              placeholderTextColor="#94A3B8"
-              style={styles.input}
-              value={name}
-            />
-          </View>
+            <View style={styles.fieldGroup}>
+              <Text style={styles.label}>Pot name</Text>
+              <TextInput
+                onChangeText={setName}
+                placeholder="Pot name"
+                placeholderTextColor="#94A3B8"
+                style={styles.input}
+                value={name}
+              />
+            </View>
 
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Initial amount</Text>
-            <TextInput
-              keyboardType="numeric"
-              onChangeText={(value) => setAmountDigits(toDigitsOnly(value))}
-              placeholder="Initial amount"
-              placeholderTextColor="#94A3B8"
-              style={styles.input}
-              value={amountInput}
-            />
-          </View>
+            <View style={styles.fieldGroup}>
+              <Text style={styles.label}>Initial amount</Text>
+              <TextInput
+                keyboardType="numeric"
+                onChangeText={(value) => setAmountDigits(toDigitsOnly(value))}
+                placeholder="Initial amount"
+                placeholderTextColor="#94A3B8"
+                style={styles.input}
+                value={amountInput}
+              />
+            </View>
 
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          <View style={styles.actions}>
-            <Pressable
-              onPress={onClose}
-              style={styles.secondaryButton}
-              testID="close-button"
-            >
-              <Text style={styles.secondaryButtonText}>Cancel</Text>
-            </Pressable>
-            <Pressable onPress={handleCreatePot} style={styles.primaryButton}>
-              <Text style={styles.primaryButtonText}>Create Pot</Text>
-            </Pressable>
+            <View style={styles.actions}>
+              <Pressable
+                onPress={onClose}
+                style={styles.secondaryButton}
+                testID="close-button"
+              >
+                <Text style={styles.secondaryButtonText}>Cancel</Text>
+              </Pressable>
+              <Pressable onPress={handleCreatePot} style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>Create Pot</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
-      </View>
       </KeyboardAvoidingView>
     </Modal>
   );

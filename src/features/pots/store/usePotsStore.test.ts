@@ -23,7 +23,7 @@ describe("usePotsStore", () => {
   it("allows adding a new pot", () => {
     const newPot = {
       id: "pot-1",
-      name: "Savings",
+      name: "Holiday Fund",
       balance: 100_000,
     };
 
@@ -117,5 +117,61 @@ describe("usePotsStore", () => {
 
     expect(state.pots).not.toContainEqual(newPot);
     expect(state.error).toBe("Insufficient funds to create this pot.");
+  });
+
+  it("prevents adding a pot with a duplicate name (case-insensitive)", () => {
+    const duplicatePot = {
+      id: "pot-4",
+      name: "savings", // "Savings" already exists as pot-0
+      balance: 10_000,
+    };
+
+    const success = usePotsStore.getState().addPot(duplicatePot);
+
+    expect(success).toBe(false);
+    expect(usePotsStore.getState().pots).toHaveLength(1);
+    expect(usePotsStore.getState().error).toBe(
+      "A pot with this name already exists.",
+    );
+  });
+
+  it("prevents renaming a pot to a duplicate name (case-insensitive)", () => {
+    // Add another pot first
+    usePotsStore.getState().pots.push({
+      id: "pot-1",
+      name: "Holidays",
+      balance: 10_000,
+    });
+
+    const success = usePotsStore.getState().renamePot("pot-1", " SAVINGS "); // extra spaces, case-insensitive
+
+    expect(success).toBe(false);
+    expect(usePotsStore.getState().error).toBe(
+      "A pot with this name already exists.",
+    );
+  });
+
+  it("returns true on successfully performing actions", () => {
+    const successAdd = usePotsStore.getState().addPot({
+      id: "pot-5",
+      name: "Unique Goal",
+      balance: 5_000,
+    });
+    expect(successAdd).toBe(true);
+
+    const successRename = usePotsStore
+      .getState()
+      .renamePot("pot-5", "Updated Unique Goal");
+    expect(successRename).toBe(true);
+
+    const successTransferToPot = usePotsStore
+      .getState()
+      .transferToPot("pot-5", 2_000);
+    expect(successTransferToPot).toBe(true);
+
+    const successTransferToWallet = usePotsStore
+      .getState()
+      .transferToWallet("pot-5", 1_000);
+    expect(successTransferToWallet).toBe(true);
   });
 });

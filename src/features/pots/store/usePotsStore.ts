@@ -14,11 +14,11 @@ interface PotsState {
   pots: Pot[];
   error: string | null;
   isHydrated: boolean;
-  addPot: (pot: Pot) => void;
-  renamePot: (potId: string, name: string) => void;
-  transferToPot: (potId: string, amountInPence: number) => void;
-  transferToWallet: (potId: string, amountInPence: number) => void;
-  deletePot: (potId: string) => void;
+  addPot: (pot: Pot) => boolean;
+  renamePot: (potId: string, name: string) => boolean;
+  transferToPot: (potId: string, amountInPence: number) => boolean;
+  transferToWallet: (potId: string, amountInPence: number) => boolean;
+  deletePot: (potId: string) => boolean;
   clearError: () => void;
   setHydrated: (hydrated: boolean) => void;
 }
@@ -36,35 +36,68 @@ export const usePotsStore = create<PotsState>()(
       isHydrated: false,
 
       addPot: (pot) => {
-        const walletBalance = useWalletStore.getState().balance;
+        const trimmedName = pot.name.trim();
 
-        if (walletBalance < pot.balance) {
-          set({ error: insufficientFundsError });
-          return;
+        if (!trimmedName) {
+          set({ error: "Pot name is required." });
+          return false;
         }
 
-        useWalletStore
+        const nameExists = get().pots.some(
+          (p) => p.name.trim().toLowerCase() === trimmedName.toLowerCase(),
+        );
+        if (nameExists) {
+          set({ error: "A pot with this name already exists." });
+          return false;
+        }
+
+        const walletBalance = useWalletStore.getState().balance;
+        if (walletBalance < pot.balance) {
+          set({ error: insufficientFundsError });
+          return false;
+        }
+
+        const transactionSuccess = useWalletStore
           .getState()
-          .executeTransaction(pot.balance, `Transfer to ${pot.name}`, "debit");
+          .executeTransaction(
+            pot.balance,
+            `Transfer to ${trimmedName}`,
+            "debit",
+          );
+
+        if (!transactionSuccess) {
+          set({ error: insufficientFundsError });
+          return false;
+        }
 
         set((state) => ({
-          pots: [...state.pots, pot],
+          pots: [...state.pots, { ...pot, name: trimmedName }],
           error: null,
         }));
+        return true;
       },
 
       renamePot: (potId, name) => {
         const trimmedName = name.trim();
-        const pot = get().pots.find((currentPot) => currentPot.id === potId);
-
-        if (!pot) {
-          set({ error: potNotFoundError });
-          return;
-        }
-
         if (!trimmedName) {
           set({ error: "Pot name is required." });
-          return;
+          return false;
+        }
+
+        const pot = get().pots.find((currentPot) => currentPot.id === potId);
+        if (!pot) {
+          set({ error: potNotFoundError });
+          return false;
+        }
+
+        const nameExists = get().pots.some(
+          (p) =>
+            p.id !== potId &&
+            p.name.trim().toLowerCase() === trimmedName.toLowerCase(),
+        );
+        if (nameExists) {
+          set({ error: "A pot with this name already exists." });
+          return false;
         }
 
         set((state) => ({
@@ -75,29 +108,34 @@ export const usePotsStore = create<PotsState>()(
           ),
           error: null,
         }));
+        return true;
       },
 
       transferToPot: (potId, amountInPence) => {
         const pot = get().pots.find((currentPot) => currentPot.id === potId);
-        const walletBalance = useWalletStore.getState().balance;
-
         if (!pot) {
           set({ error: potNotFoundError });
-          return;
+          return false;
         }
 
+        const walletBalance = useWalletStore.getState().balance;
         if (walletBalance < amountInPence) {
           set({ error: insufficientWalletFundsError });
-          return;
+          return false;
         }
 
-        useWalletStore
+        const transactionSuccess = useWalletStore
           .getState()
           .executeTransaction(
             amountInPence,
             `Transfer to ${pot.name}`,
             "debit",
           );
+
+        if (!transactionSuccess) {
+          set({ error: insufficientWalletFundsError });
+          return false;
+        }
 
         set((state) => ({
           pots: state.pots.map((currentPot) =>
@@ -107,28 +145,33 @@ export const usePotsStore = create<PotsState>()(
           ),
           error: null,
         }));
+        return true;
       },
 
       transferToWallet: (potId, amountInPence) => {
         const pot = get().pots.find((currentPot) => currentPot.id === potId);
-
         if (!pot) {
           set({ error: potNotFoundError });
-          return;
+          return false;
         }
 
         if (pot.balance < amountInPence) {
           set({ error: insufficientPotFundsError });
-          return;
+          return false;
         }
 
-        useWalletStore
+        const transactionSuccess = useWalletStore
           .getState()
           .executeTransaction(
             amountInPence,
             `Transfer from ${pot.name}`,
             "credit",
           );
+
+        if (!transactionSuccess) {
+          set({ error: "Failed to execute transaction in wallet." });
+          return false;
+        }
 
         set((state) => ({
           pots: state.pots.map((currentPot) =>
@@ -138,26 +181,31 @@ export const usePotsStore = create<PotsState>()(
           ),
           error: null,
         }));
+        return true;
       },
 
       deletePot: (potId) => {
         const pot = get().pots.find((currentPot) => currentPot.id === potId);
-
         if (!pot) {
           set({ error: potNotFoundError });
-          return;
+          return false;
         }
 
         if (pot.balance > 0) {
-          useWalletStore
+          const transactionSuccess = useWalletStore
             .getState()
             .executeTransaction(pot.balance, `Delete ${pot.name}`, "credit");
+          if (!transactionSuccess) {
+            set({ error: "Failed to transfer pot balance back to wallet." });
+            return false;
+          }
         }
 
         set((state) => ({
           pots: state.pots.filter((currentPot) => currentPot.id !== potId),
           error: null,
         }));
+        return true;
       },
 
       clearError: () => set({ error: null }),

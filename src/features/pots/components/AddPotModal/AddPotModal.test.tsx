@@ -2,13 +2,17 @@ import { render, screen, userEvent } from "@testing-library/react-native";
 import AddPotModal from ".";
 import { usePotsStore } from "../../store/usePotsStore";
 
-const mockAddPot = jest.fn();
-jest.mock("../../store/usePotsStore", () => ({
-  usePotsStore: (selector?: (s: { addPot: jest.Mock }) => unknown) => {
+const mockAddPot = jest.fn(() => true);
+jest.mock("../../store/usePotsStore", () => {
+  const mockStore = (selector?: (s: any) => unknown) => {
     const state = { addPot: mockAddPot };
     return selector ? selector(state) : state;
-  },
-}));
+  };
+  mockStore.getState = () => ({ error: null, pots: [] });
+  return {
+    usePotsStore: mockStore,
+  };
+});
 const mockOnClose = jest.fn();
 
 describe("AddPotModal", () => {

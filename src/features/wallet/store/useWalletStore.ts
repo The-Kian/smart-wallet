@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -19,7 +20,7 @@ interface WalletState {
     amountInPence: number,
     description: string,
     type: "credit" | "debit",
-  ) => void;
+  ) => boolean;
   error: string | null;
   clearError: () => void;
   setHydrated: (hydrated: boolean) => void;
@@ -44,17 +45,17 @@ export const useWalletStore = create<WalletState>()(
         if (type === "debit") {
           if (balance < amountInPence) {
             set({ error: "Insufficient funds. Transaction declined." });
-            return;
+            return false;
           }
           newBalance = balance - amountInPence;
         } else if (type === "credit") {
           newBalance = balance + amountInPence;
         } else {
-          return;
+          return false;
         }
 
         const newTransaction: Transaction = {
-          id: Math.random().toString(36).substring(2, 9),
+          id: Crypto.randomUUID(),
           date: new Date().toISOString(),
           description,
           amount: amountInPence,
@@ -67,6 +68,8 @@ export const useWalletStore = create<WalletState>()(
           transactions: [newTransaction, ...transactions],
           error: null,
         });
+
+        return true;
       },
 
       clearError: () => set({ error: null }),
