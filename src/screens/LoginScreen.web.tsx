@@ -9,8 +9,7 @@ import { useAuthStore, UserProfile } from "../features/auth/store/useAuthStore";
 // Required for web popup redirects
 WebBrowser.maybeCompleteAuthSession();
 
-const GOOGLE_CLIENT_ID =
-  "118189943193-96r1cuehgkagl5l570kvn13tej7ahkt2.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || "";
 
 const discovery = {
   authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",

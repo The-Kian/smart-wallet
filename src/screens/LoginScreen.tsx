@@ -4,10 +4,8 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import AuthActionCard from "@/features/auth/components/AuthActionCard";
 import { useAuthStore } from "../features/auth/store/useAuthStore";
 
-const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || "";
 
 GoogleSignin.configure({
-  webClientId: GOOGLE_CLIENT_ID,
   iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || "",
 });
 

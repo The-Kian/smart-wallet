@@ -1,4 +1,5 @@
 import { Href, Slot, useRouter, useSegments } from "expo-router";
+import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useAuthStore } from "../features/auth/store/useAuthStore";
@@ -6,6 +7,10 @@ import { useWalletStore } from "../features/wallet/store/useWalletStore";
 import { usePotsStore } from "../features/pots/store/usePotsStore";
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    "Ionicons": "https://code.ionicframework.com/ionicons/2.0.1/fonts/ionicons.ttf",
+  });
+
   const { isAuthenticated, isHydrated: isAuthHydrated } = useAuthStore();
   const isWalletHydrated = useWalletStore((state) => state.isHydrated);
   const isPotsHydrated = usePotsStore((state) => state.isHydrated);
@@ -26,7 +31,7 @@ export default function RootLayout() {
     }
   }, [isAuthenticated, allHydrated, segments, router]);
 
-  if (!allHydrated) {
+  if (!allHydrated || !fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" testID="loading-indicator" />
