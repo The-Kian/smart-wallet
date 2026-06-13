@@ -9,9 +9,10 @@ import { useVouchersStore } from "@/features/vouchers/store/useVouchersStore";
 import { useWalletStore } from "@/features/wallet/store/useWalletStore";
 import { confirm } from "@/utils/confirm";
 import { formatCurrencyFromPence } from "@/utils/formatCurrency";
+import LoyaltyRewardsCard from "@/features/vouchers/components/LoyaltyPointsCard";
 
 export default function Shop() {
-  const { vouchers, error, purchaseVoucher, clearError } = useVouchersStore();
+  const { vouchers, pointsBalance, error, purchaseVoucher, redeemPoints, clearError } = useVouchersStore();
   const walletBalance = useWalletStore((state) => state.balance);
 
   const handlePurchase = (title: string, valueInPence: number) => {
@@ -33,12 +34,38 @@ export default function Shop() {
     });
   };
 
+  const handleRedeem = () => {
+    const redeemablePoints = Math.floor(pointsBalance / 100) * 100;
+    
+    confirm({
+      title: "Redeem Points",
+      message: `Convert ${redeemablePoints} points into ${formatCurrencyFromPence(redeemablePoints)} wallet credit?`,
+      confirmLabel: "Redeem",
+      onConfirm: () => {
+        const success = redeemPoints();
+        if (success) {
+          confirm({
+            title: "Success",
+            message: "Funds added to your main wallet.",
+            confirmLabel: "OK",
+            onConfirm: () => {},
+          });
+        }
+      },
+    });
+  };
+
   return (
     <SafeAreaView style={styles.safeContainer} edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ScreenHeader
           title="Shop"
           description="Purchase vouchers directly using your wallet balance."
+        />
+
+        <LoyaltyRewardsCard
+            pointsBalance={pointsBalance}
+            onRedeem={handleRedeem}
         />
 
         <BalanceSummaryCard
