@@ -25,7 +25,7 @@ export default function AuthActionCard({
         style={({ pressed }) => [styles.mockButton, pressed && styles.buttonPressed]}
       >
         <Text style={styles.mockButtonText}>
-          Bypass with Sandbox Profile (Simulator / Web)
+          Use mock profile
         </Text>
       </Pressable>
     </View>
