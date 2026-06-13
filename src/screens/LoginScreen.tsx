@@ -4,11 +4,11 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import AuthActionCard from "@/features/auth/components/AuthActionCard";
 import { useAuthStore } from "../features/auth/store/useAuthStore";
 
-const GOOGLE_CLIENT_ID = "118189943193-96r1cuehgkagl5l570kvn13tej7ahkt2.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID || "";
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
-  iosClientId: "118189943193-212365obbklams86vdijvj27fsg5kove.apps.googleusercontent.com",
+  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID || "",
 });
 
 export default function LoginScreenNative() {
