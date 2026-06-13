@@ -39,21 +39,17 @@ The brief allowed for scoping decisions, but I opted to implement all **five** r
 
 1. Clone the repository.
 2. Run `pnpm install` to install dependencies.
-3. **Environment Setup:** Copy the `.env.example` file to `.env` and add your Google OAuth Client IDs (or use .env file sent with the repo link).
-4. Run `pnpm start` to open the Expo development server.
-
-**Google OAuth Configuration:**
-To run the authentication flow locally, you will need to provide Google Client IDs for the respective platforms.
-
-1. Create a free project in the Google Cloud Console.
-2. Configure the OAuth consent screen.
-3. Create OAuth client IDs for **Web**, **iOS**, and **Android**.
-4. Paste these IDs into your `.env` file matching the keys in `.env.example`.
+3. **Environment Setup:** Copy the `.env.example` file to `.env` and add your Google OAuth Client IDs .
+4. Run `pnpm ios`, `pnpm android` or `pnpm web`
 
 ---
 
 ## 🔮 What I'd do with more time
 
-If I had additional time:
-i would implement a CI/CD system to check for linting, testing and to deploy more easily.
-I would set up e2e tests
+Comprehensive CI/CD Pipeline: I would set up GitHub Actions coupled with EAS (Expo Application Services) to automate formatting, linting, type-checking, and unit testing for every pull request, culminating in automated preview deployments.
+
+End-to-End (E2E) Testing: While unit tests cover the core logic, integrating an E2E framework like Maestro or Detox would guarantee the critical user flows (e.g., Authenticating -> Buying a Voucher -> Redeeming Points) remain unbroken across iOS and Android simulators.
+
+Enhanced Telemetry & Crash Reporting: Integrating a tool like Sentry to monitor unhandled exceptions in production, particularly around the OAuth and network boundaries, to ensure graceful degradation.
+
+Animations: I would implement React Native Skia for high performance animations.

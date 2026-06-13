@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",
+    backgroundColor: "#132a61",
     justifyContent: "center",
   },
   depositBtn: { backgroundColor: "#0F766E" },

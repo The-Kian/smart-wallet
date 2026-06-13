@@ -5,6 +5,7 @@ import {
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   View,
@@ -69,11 +70,21 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
       visible={true}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
-        <View style={styles.backdrop}>
-          <View style={styles.card}>
+        <ScrollView
+          style={{ flex: 1, backgroundColor: styles.backdrop.backgroundColor }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+            paddingHorizontal: 20,
+            paddingVertical: 40,
+          }}
+          bounces={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
             <Text style={styles.title}>Create a new pot</Text>
             <Text style={styles.subtitle}>
               Set a name and starting amount for your savings goal.
@@ -116,8 +127,8 @@ const AddPotModal = ({ onClose }: { onClose: () => void }) => {
                 <Text style={styles.primaryButtonText}>Create Pot</Text>
               </Pressable>
             </View>
-          </View>
-        </View>
+          </Pressable>
+        </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
   );
